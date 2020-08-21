@@ -5,12 +5,14 @@
  */
 package com.resturant.managment.system.controller;
 
-import com.resturant.managment.system.entity.UserLogin;
+import com.resturant.managment.system.dto.LoginDto;
 import com.resturant.managment.system.service.UserAuthenticationService;
+import javax.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -19,20 +21,25 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class UserAuthenticationController {
-
+    
     @Autowired
     UserAuthenticationService userAuthenticationService;
 
-    @PostMapping("/save")
-    public int saveUser(@RequestBody UserLogin user) {
-        userAuthenticationService.saveUser(user);
-        return user.getId();
+//    @PostMapping("/save")
+//    public int saveUser(@RequestBody UserLogin user) {
+//        userAuthenticationService.saveUser(user);
+//        return user.getId();
+//    }
+
+    @PermitAll
+    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+    public ResponseEntity authenticate(@RequestBody LoginDto loginDto) {
+        return userAuthenticationService.authenticate(loginDto);
     }
     
-     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody UserLogin user) {
-       
-        return ResponseEntity.ok(user);
+    @RequestMapping(value = "/hello", method = RequestMethod.GET)
+    public String hello() {
+        return "Hello World";
     }
 
 }

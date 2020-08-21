@@ -3,16 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.resturant.managment.system.repository;
-
-import com.resturant.managment.system.entity.UserLogin;
+package com.resturant.managment.system.constant;
 
 /**
  *
  * @author suman
  */
-public interface CustomUserRepository<T,S> {
-
-    public UserLogin findByUsername(String username);
+public enum JwtClaimsConstant {
+    
+    username;
     
 }

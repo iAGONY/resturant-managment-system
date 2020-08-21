@@ -6,12 +6,13 @@
 package com.resturant.managment.system.repository;
 
 import com.resturant.managment.system.entity.UserLogin;
+import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 
 /**
  *
  * @author sumanCustomUserRepository
  */
-public interface UserRepository extends CrudRepository<UserLogin, Integer>,CustomUserRepository<UserLogin, String> {
-    
+public interface UserRepository extends CrudRepository<UserLogin, Integer> {
+     public Optional<UserLogin> findByUsername(String username);
 }

@@ -5,11 +5,19 @@
  */
 package com.resturant.managment.system.service;
 
+import com.resturant.managment.security.JwtToken;
+import com.resturant.managment.system.dto.LoginDto;
 import com.resturant.managment.system.entity.UserLogin;
 import com.resturant.managment.system.repository.UserRepository;
+import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -18,23 +26,35 @@ import org.springframework.stereotype.Service;
  * @author suman
  */
 @Service
-public class UserAuthenticationService implements UserDetailsService {
-    
+public class UserAuthenticationService {
+
     @Autowired
     UserRepository userRepository;
-    
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
     public void saveUser(UserLogin user) {
-        System.out.println("==>>" + user.getUsername() + " " + user.getPassword());
         userRepository.save(user);
     }
 
-    @Override
-    public UserLogin loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserLogin findByUsername = userRepository.findByUsername(username);
-        if (findByUsername == null) {
-            throw new UsernameNotFoundException("Username not found");
+    public ResponseEntity authenticate(LoginDto loginDto) {
+        UserLogin userLogin = userRepository.findByUsername(loginDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
+        try {
+            Authentication auth = authenticationManager.authenticate(authReq);
+            if (auth.isAuthenticated()) {
+                String token = JwtToken.getToken(userLogin);
+                HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.set("Authorization", token);
+                return ResponseEntity.ok()
+                        .headers(responseHeaders).build();
+            }
+        } catch (BadCredentialsException | JoseException ex) {
+            ex.printStackTrace();
+            //throw exception
         }
-        return findByUsername;
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password");
     }
-    
+
 }

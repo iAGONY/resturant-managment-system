@@ -14,14 +14,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  *
  * @author suman
  */
-@Configuration
-@EnableWebMvc
-public class ApplicationConfig implements WebMvcConfigurer {
-    
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
-        // for now allowing all http method from all domains
-    }
-    
-}
+//@Configuration
+//@EnableWebMvc
+//public class ApplicationConfig implements WebMvcConfigurer {
+//    
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**");
+//        // for now allowing all http method from all domains
+//    }
+//    
+//}
